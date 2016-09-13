@@ -28,7 +28,7 @@
     NSString *path = [self dataFilePath];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSData *data = [NSData dataWithContentsOfFile:path];
-        NSKeyedUnarchiver *unarchiver = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
         _lists = [unarchiver decodeObjectForKey:@"Checklists"];
         [unarchiver finishDecoding];
         [self sortChecklists];
@@ -76,12 +76,9 @@
 }
 
 - (void)registerDefaults {
-
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    [userDefault setInteger:-1 forKey:@"ChecklistIndex"];
-    [userDefault setBool:YES forKey:@"FirstTime"];
-    [userDefault setInteger:0 forKey:@"ChecklistItemID"];
-    [userDefault synchronize];
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys: @(0), @"ChecklistItemID", @(-1), @"ChecklistIndex", @YES, @"FirstTime", nil];
+    [userDefault registerDefaults:dic];
 }
 
 -(void)setIndexOfSelectedChecklist:(NSInteger)indexOfSelectedChecklist {
